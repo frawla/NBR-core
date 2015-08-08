@@ -17,7 +17,12 @@ public class Test_Util
 
         String actual = Util.getFileWithoutExtention(f.getPath());
         String expected = "template";
+        assertEquals(expected, actual);
 
+    
+        f = new File("./src/res/template.xlsx");
+        actual = Util.getFileWithoutExtention(f.getPath());
+        expected = "template";
         assertEquals(expected, actual);
     }
 
@@ -33,10 +38,11 @@ public class Test_Util
     @Test
     public void Test_readFileAsString()
     {
-        final String fn = Util.getTestResourcesPath("/normal.txt");
-        final String expected = "line 1\nline 2\nline 3";
-        String actual = Util.readFileAsString(new TFile(new File(fn)), "\n");
-        assertEquals(expected, actual);
+        final String expected = "line 1\nline 2\nline 3".replaceAll("\n", System.lineSeparator());
+        
+        final String fn = Util.getTestResourcesPath("/normal.txt");        
+        String actual = Util.readFileAsString(new TFile(new File(fn)) );
+        assertEquals(expected, actual);       
     }
 
     @Test

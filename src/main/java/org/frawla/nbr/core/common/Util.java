@@ -74,7 +74,7 @@ public final class Util
 
     public static String getFileWithoutExtention(final String path)
     {
-        String fn = path.replaceAll("^.*\\\\(.*)\\.([^.]+)$", "$1");
+        String fn = path.replaceAll(".*[/\\\\](.*)\\.([^.]+)", "$1");
         return fn;
     }
 
@@ -151,12 +151,14 @@ public final class Util
             String line = null;
             StringBuilder str = new StringBuilder();
 
-            if ((line = in.readLine()) != null)
-                str.append(line.replace("\n", "").replace("\r", ""));
+            if ((line = in.readLine()) != null){
+                line = line.replace("\n", "").replace("\r", "");
+                str.append(line);
+            }
 
             while ((line = in.readLine()) != null)
             {
-                str.append(LineSeperator + line.replace("\n", "").replace("\r", ""));
+                str.append(LineSeperator + line);
             }
             return str.toString();
         }
