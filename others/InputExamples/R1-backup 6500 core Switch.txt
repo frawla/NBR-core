@@ -1,0 +1,1083 @@
+
+!
+upgrade fpd auto
+version 12.2
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug uptime
+service timestamps log uptime
+service password-encryption
+service counters max age 5
+!
+hostname FAQIH-JED-DC-Core
+!
+boot-start-marker
+boot system flash sup-bootflashs72033-adventerprise_wan-mz.122-33.SXI2a.bin
+boot system flash sup-bootdisk:s72033-adventerprise_wan-mz.122-33.SXI2a.bin
+boot-end-marker
+!
+security passwords min-length 1
+logging buffered 99999
+enable secret 5 $1$J0RG$ivYqTgbz6jmeKUy.WYwEU1
+!
+username admin privilege 15 secret 5 $1$K57S$m1PgjFFsuck5d1jfW9j/a1
+username mohammed privilege 15 secret 5 $1$dPvt$54FGfMADdL46ticCn1EOX1
+aaa new-model
+!
+!
+aaa group server tacacs+ TACACS-MGMT
+ server-private 10.50.50.50 key 7 013527357223392E027F714D5D
+ ip tacacs source-interface Loopback0
+!
+aaa authentication login LOGIN-AUTHEN group TACACS-MGMT local
+aaa authorization config-commands
+aaa authorization exec LOGIN-AUTHOR group TACACS-MGMT if-authenticated 
+aaa accounting commands 0 LOGIN-ACC start-stop group TACACS-MGMT
+aaa accounting commands 1 LOGIN-ACC start-stop group TACACS-MGMT
+aaa accounting commands 15 LOGIN-ACC start-stop group TACACS-MGMT
+aaa accounting connection LOGIN-ACC start-stop group TACACS-MGMT
+!
+!
+!
+aaa session-id common
+svclc multiple-vlan-interfaces
+svclc switch 1 module 1 vlan-group 2,9
+svclc switch 1 module 2 vlan-group 1,9
+svclc switch 2 module 1 vlan-group 2,9
+svclc switch 2 module 2 vlan-group 1,9
+svclc vlan-group 2  7,40,100,200,300,800
+svclc vlan-group 9  9,900
+firewall multiple-vlan-interfaces
+firewall switch 1 module 2 vlan-group 1,9
+firewall switch 2 module 1 vlan-group 2,9
+firewall switch 2 module 2 vlan-group 1,9
+firewall vlan-group 1  5,20,30,50,910
+intrusion-detection switch 1 module 3 management-port access-vlan 9
+intrusion-detection switch 2 module 3 management-port access-vlan 9
+intrusion-detection switch 1 module 3 data-port 1 trunk allowed-vlan 900,910
+intrusion-detection switch 2 module 3 data-port 1 trunk allowed-vlan 900,910
+ip subnet-zero
+!
+!
+ip dhcp excluded-address 10.30.2.250 10.30.2.254
+ip dhcp excluded-address 10.30.1.240 10.30.1.254
+ip dhcp excluded-address 10.40.4.1 10.40.4.109
+ip dhcp excluded-address 10.40.4.131 10.40.4.254
+ip dhcp excluded-address 10.30.2.1 10.30.2.15
+ip dhcp excluded-address 10.30.1.1 10.30.1.15
+ip dhcp excluded-address 10.30.1.20
+!
+ip dhcp pool IPT
+   network 10.30.2.0 255.255.255.0
+   default-router 10.30.2.250 
+   option 150 ip 10.40.2.10 10.40.2.11 
+!
+ip dhcp pool DataWireless
+   network 10.30.1.0 255.255.255.0
+   default-router 10.30.1.250 
+   option 252 ip 10.70.70.2 
+   dns-server 10.40.4.75 10.40.4.76 
+!
+ip vrf managment
+ rd 200:25
+ route-target export 200:25
+ route-target import 200:25
+!
+no ip domain-lookup
+ip name-server 8.8.8.8
+!
+switch virtual domain 100
+ switch mode virtual
+ switch 1 priority 110
+ switch 2 priority 100
+!
+mls netflow interface
+mls cef error action reset
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+diagnostic bootup level minimal
+!
+redundancy
+ main-cpu
+  auto-sync running-config
+ mode sso
+!
+vlan internal allocation policy ascending
+vlan access-log ratelimit 2000
+!
+vlan 2999
+ name anmar-mobiley
+!
+!
+!
+interface Loopback0
+ ip address 10.200.0.200 255.255.255.255
+!
+interface Port-channel1
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 901
+ switchport trunk allowed vlan 10,60,101,151,200,201,251,300,301,500,601,900
+ switchport trunk allowed vlan add 901
+ switchport mode trunk
+!
+interface Port-channel2
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 901
+ switchport trunk allowed vlan 10,60,101,151,200,201,251,300,301,500,601,900
+ switchport trunk allowed vlan add 901
+ switchport mode trunk
+!
+interface Port-channel3
+ description Port-Channel for CM-SUB
+ switchport
+ switchport access vlan 200
+ switchport mode access
+ shutdown
+!
+interface Port-channel10
+ no switchport
+ no ip address
+ switch virtual link 1
+ mls qos trust cos
+ no mls qos channel-consistency
+!
+interface Port-channel15
+ description connected to Watchguard 10.5.5.1
+ switchport
+ switchport access vlan 500
+ switchport mode access
+!
+interface Port-channel20
+ no switchport
+ no ip address
+ switch virtual link 2
+ mls qos trust cos
+ no mls qos channel-consistency
+!
+interface GigabitEthernet1/4/1
+ description Connected to Unity
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet1/4/2
+ description Connected to SJLSEDG01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/3
+ description Voice-GT-1
+ switchport
+ switchport access vlan 200
+ switchport mode access
+ speed 10
+!
+interface GigabitEthernet1/4/4
+ description SjLSEDG01 ( Lync )
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/5
+ description Connected to LMS
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet1/4/6
+ description oracle 1
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/7
+ description IPT
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet1/4/8
+ description Connected to ERP.Test
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/9
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet1/4/10
+ description Connected to SJHV01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/11
+ description oracle 2
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/12
+ description Connected to SJDC01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/13
+ description MPLS
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/14
+ description Connected to FREE2 - SJESX02
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/15
+ description ANTISPAM Server
+ switchport
+ switchport access vlan 900
+!
+interface GigabitEthernet1/4/16
+ description Connected to ERP.PRO
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/17
+ description Nes HP-server for backup
+ switchport
+ switchport access vlan 900
+!
+interface GigabitEthernet1/4/18
+ description Connected to ERP.TestDB
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/19
+ switchport
+ switchport access vlan 900
+!
+interface GigabitEthernet1/4/20
+ description Connected to SJMail01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/21
+ no switchport
+ no ip address
+!
+interface GigabitEthernet1/4/22
+ description Connected to SJLNKFE01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/23
+ switchport
+ switchport access vlan 900
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface GigabitEthernet1/4/24
+ description Connected to FREE3  SJESX03
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/25
+ description Connected to LMS
+ switchport
+ switchport access vlan 901
+ switchport mode access
+!
+interface GigabitEthernet1/4/26
+ description ERP.DP1-Nic2-192.168
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/27
+ switchport
+ switchport access vlan 300
+ switchport mode access
+!
+interface GigabitEthernet1/4/28
+ description DEVDB-DB
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/29
+ description PRODDP1
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/30
+ description SQL-1
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/31
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/32
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/33
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/34
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/35
+ description Sonicwall-1-in-10.5.5.1
+ switchport
+ switchport access vlan 500
+ switchport mode access
+ channel-group 15 mode on
+!
+interface GigabitEthernet1/4/36
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/37
+ description "Uplink to  HO-EDGE-SW-1 FOR ETHERCHANNEL 1"
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 901
+ switchport trunk allowed vlan 10,60,101,151,200,201,251,300,301,500,601,900
+ switchport trunk allowed vlan add 901
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface GigabitEthernet1/4/38
+ description "Uplink to  HO-EDGE-SW-2 FOR ETHERCHANNEL 2"
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 901
+ switchport trunk allowed vlan 10,60,101,151,200,201,251,300,301,500,601,900
+ switchport trunk allowed vlan add 901
+ switchport mode trunk
+ channel-group 2 mode on
+!
+interface GigabitEthernet1/4/39
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/40
+ description ERP.DP2-Nic1-10.40
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/41
+ switchport
+ switchport access vlan 900
+!
+interface GigabitEthernet1/4/42
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/43
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/44
+ description Connected to ERP.P
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/45
+ description To Wachgaurd-DMZ port 4 
+ switchport
+ switchport access vlan 900
+!
+interface GigabitEthernet1/4/46
+ description 10.40.4.137
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet1/4/47
+ description connected to watchguard 10.5.5.1
+ switchport
+ switchport access vlan 500
+ switchport mode access
+ channel-group 15 mode on
+!
+interface GigabitEthernet1/4/48
+ description Connected to FAQIH-INTERNET-FW-1
+ switchport
+ switchport access vlan 60
+ switchport mode access
+!
+interface GigabitEthernet1/5/1
+ switchport
+ switchport access vlan 3925
+ switchport mode access
+!
+interface GigabitEthernet1/5/2
+ no switchport
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/5/3
+ no switchport
+ no ip address
+ shutdown
+!
+interface TenGigabitEthernet1/5/4
+ no switchport
+ no ip address
+ mls qos trust cos
+ channel-group 10 mode on
+!
+interface TenGigabitEthernet1/5/5
+ no switchport
+ no ip address
+ mls qos trust cos
+ channel-group 10 mode on
+!
+interface GigabitEthernet2/4/1
+ description Connected to MSC-SWB
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet2/4/2
+ description Connected to SJLSEDG01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/3
+ description Connected to WAN-RTR
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet2/4/4
+ description ERP.Test-NFS
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/5
+ description Connected to CS-Pub
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet2/4/6
+ description Connected to ERP.Test
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/7
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet2/4/8
+ description Connected to FREE1 - SJESX01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/9
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet2/4/10
+ description Connected to SJHV01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/11
+ no switchport
+ no ip address
+!
+interface GigabitEthernet2/4/12
+ description Connected to FREE2 - SJESX02
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/13
+ description sonicmall x2 mpls zone 10.109.1.5
+ switchport
+ switchport access vlan 600
+!
+interface GigabitEthernet2/4/14
+ description Connected to SJDC01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/15
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/16
+ description Connected to ERP.PRO
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/17
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/18
+ description Connected to SJLKMED01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/19
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/20
+ description Connected to SJMail01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/21
+ description Connect to VGW-FKH-DC-1 port 0/0
+ switchport
+ switchport access vlan 200
+ switchport mode access
+!
+interface GigabitEthernet2/4/22
+ description Connected to SJLSKFE01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/23
+ switchport
+ switchport access vlan 900
+!
+interface GigabitEthernet2/4/24
+ description Connected to FREE3 - SJESX03
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/25
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/26
+ description ERP.DP1-Nic1-10.40
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/27
+ switchport
+ switchport access vlan 60
+!
+interface GigabitEthernet2/4/28
+ description DEVDB-NFS
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/29
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/30
+ description Connected to ERP.DEV
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/31
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/32
+ description Connected to SJSQL01
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/33
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/34
+ description Connected to SJHV02
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/35
+ description Sonicwall-1-in-10.5.5.2
+ switchport
+ switchport access vlan 500
+ switchport mode access
+!
+interface GigabitEthernet2/4/36
+ description Connected to FREE4
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/37
+ description Connected to ERP.PRO
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/38
+ description ERP.DP2-Nic2-192.168
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/39
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/40
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/41
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/42
+ description "Uplink to  HO-EDGE-SW-1 FOR ETHERCHANNEL 1"
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 901
+ switchport trunk allowed vlan 10,60,101,151,200,201,251,300,301,500,601,900
+ switchport trunk allowed vlan add 901
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface GigabitEthernet2/4/43
+ description "Uplink to  HO-EDGE-SW-2 FOR ETHERCHANNEL 1"
+ switchport
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 901
+ switchport trunk allowed vlan 10,60,101,151,200,201,251,300,301,500,601,900
+ switchport trunk allowed vlan add 901
+ switchport mode trunk
+ channel-group 2 mode on
+!
+interface GigabitEthernet2/4/44
+ switchport
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet2/4/45
+ switchport
+ switchport access vlan 101
+ switchport mode access
+!
+interface GigabitEthernet2/4/46
+ no switchport
+ no ip address
+!
+interface GigabitEthernet2/4/47
+ no switchport
+ no ip address
+!
+interface GigabitEthernet2/4/48
+ description Connected to FAQIH-INTERNET-FW-2
+ switchport
+ switchport access vlan 10
+ switchport mode access
+!
+interface GigabitEthernet2/5/1
+ no switchport
+ no ip address
+ shutdown
+!
+interface GigabitEthernet2/5/2
+ no switchport
+ no ip address
+ shutdown
+!
+interface GigabitEthernet2/5/3
+ switchport
+ switchport access vlan 600
+!
+interface TenGigabitEthernet2/5/4
+ no switchport
+ no ip address
+ mls qos trust cos
+ channel-group 20 mode on
+!
+interface TenGigabitEthernet2/5/5
+ no switchport
+ no ip address
+ mls qos trust cos
+ channel-group 20 mode on
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan9
+ description Management Vlan 
+ ip address 192.168.1.1 255.255.255.0
+!
+interface Vlan10
+ ip address 10.50.50.1 255.255.255.0
+!
+interface Vlan20
+ description Connected to Firewall Module 1 & 2
+ ip address 10.50.50.17 255.255.255.240
+ ip route-cache policy
+ ip policy route-map SP
+ shutdown
+!
+interface Vlan30
+ no ip address
+ shutdown
+!
+interface Vlan40
+ no ip address
+!
+interface Vlan50
+ no ip address
+ shutdown
+!
+interface Vlan60
+ ip address 10.60.60.1 255.255.255.0
+!
+interface Vlan100
+ ip address 10.40.3.250 255.255.255.0
+!
+interface Vlan101
+ ip address 10.30.1.250 255.255.255.0
+!
+interface Vlan102
+ no ip address
+ shutdown
+!
+interface Vlan151
+ ip address 10.30.2.250 255.255.255.0
+!
+interface Vlan200
+ ip address 10.40.2.250 255.255.255.0
+!
+interface Vlan251
+ ip address 10.30.4.250 255.255.255.0
+!
+interface Vlan300
+ ip address 10.40.1.250 255.255.255.0
+!
+interface Vlan301
+ description Conference
+ ip address 10.40.5.250 255.255.255.0
+ ip policy route-map SP
+!
+interface Vlan500
+ ip address 10.5.5.250 255.255.255.0
+!
+interface Vlan600
+ description branches-wan vlan to router 10.109.1.1
+ ip address 10.109.1.2 255.255.255.0
+ ip policy route-map SP
+ ip ospf network point-to-point
+ shutdown
+!
+interface Vlan601
+ ip address 10.30.6.250 255.255.255.0
+!
+interface Vlan900
+ ip address 10.40.4.250 255.255.255.0
+ ip policy route-map SP
+ shutdown
+!
+interface Vlan901
+ ip address 10.30.5.250 255.255.255.0
+!
+interface Vlan905
+ description APSDG-sync
+ ip address 192.168.4.250 255.255.255.0
+ shutdown
+!
+interface Vlan2999
+ ip address 192.168.8.3 255.255.255.0
+ shutdown
+!
+interface Vlan3925
+ ip address 84.235.46.37 255.255.255.252
+!
+interface Vlan3952
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 10.200.0.200
+ log-adjacency-changes
+ area 2 stub no-summary
+ redistribute connected
+ redistribute static subnets
+ network 10.5.5.250 0.0.0.0 area 0
+ network 10.30.1.250 0.0.0.0 area 0
+ network 10.30.2.250 0.0.0.0 area 0
+ network 10.30.3.250 0.0.0.0 area 0
+ network 10.30.4.250 0.0.0.0 area 0
+ network 10.30.5.250 0.0.0.0 area 0
+ network 10.30.6.250 0.0.0.0 area 0
+ network 10.40.1.250 0.0.0.0 area 0
+ network 10.40.2.250 0.0.0.0 area 0
+ network 10.40.3.250 0.0.0.0 area 0
+ network 10.40.5.250 0.0.0.0 area 0
+ network 10.50.50.1 0.0.0.0 area 0
+ network 10.50.50.17 0.0.0.0 area 2
+ network 10.60.60.1 0.0.0.0 area 0
+ network 10.109.1.2 0.0.0.0 area 0
+ network 10.200.0.200 0.0.0.0 area 0
+ network 192.168.8.3 0.0.0.0 area 0
+ default-information originate
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 10.5.5.1
+ip route 10.30.1.213 255.255.255.255 10.5.5.1
+!
+!
+no ip http server
+!
+ip access-list standard MGMT-ACL
+ permit 10.30.1.105 log
+ permit 10.30.5.200 log
+!
+ip access-list extended SP
+ permit ip host 172.16.7.9 any
+ permit ip host 10.5.1.15 any
+ permit ip host 10.5.1.5 any
+ permit ip host 10.30.1.200 any
+ permit ip host 10.40.5.5 any
+ permit ip host 10.3.1.6 any
+ permit ip host 10.40.5.105 any
+ permit ip host 10.2.11.53 any
+ permit ip host 10.3.1.5 any
+ deny   ip host 10.40.4.150 any
+ permit ip 10.40.4.0 0.0.0.255 any
+!
+!
+snmp-server engineID local 800000090300EC3091E30740
+snmp-server community F@QIH_COMM RO MGMT-ACL
+snmp-server trap-source Vlan10
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps chassis
+snmp-server enable traps module
+snmp-server enable traps transceiver all
+snmp-server enable traps ds1
+snmp-server enable traps call-home message-send-fail server-fail
+snmp-server enable traps eigrp
+snmp-server enable traps casa
+snmp-server enable traps tty
+snmp-server enable traps ospf state-change
+snmp-server enable traps ospf errors
+snmp-server enable traps ospf retransmit
+snmp-server enable traps ospf lsa
+snmp-server enable traps ospf cisco-specific state-change nssa-trans-change
+snmp-server enable traps ospf cisco-specific state-change shamlink interface-old
+snmp-server enable traps ospf cisco-specific state-change shamlink neighbor
+snmp-server enable traps ospf cisco-specific errors
+snmp-server enable traps ospf cisco-specific retransmit
+snmp-server enable traps ospf cisco-specific lsa
+snmp-server enable traps atm subif
+snmp-server enable traps bgp
+snmp-server enable traps bulkstat collection transfer
+snmp-server enable traps config-copy
+snmp-server enable traps config
+snmp-server enable traps config-ctid
+snmp-server enable traps dlsw
+snmp-server enable traps event-manager
+snmp-server enable traps frame-relay
+snmp-server enable traps frame-relay subif
+snmp-server enable traps hsrp
+snmp-server enable traps ipmulticast
+snmp-server enable traps l2tc threshold sys-threshold
+snmp-server enable traps MAC-Notification change move threshold
+snmp-server enable traps msdp
+snmp-server enable traps pim neighbor-change rp-mapping-change invalid-pim-message
+snmp-server enable traps rf
+snmp-server enable traps rtr
+snmp-server enable traps slb real virtual csrp
+snmp-server enable traps bridge newroot topologychange
+snmp-server enable traps stpx inconsistency root-inconsistency loop-inconsistency
+snmp-server enable traps syslog
+snmp-server enable traps rep
+snmp-server enable traps auth-framework sec-violation
+snmp-server enable traps memory bufferpeak
+snmp-server enable traps flex-links status
+snmp-server enable traps csg agent quota-server database
+snmp-server enable traps sonet
+snmp-server enable traps dial
+snmp-server enable traps dot1x auth-fail-vlan guest-vlan no-auth-fail-vlan no-guest-vlan
+snmp-server enable traps ethernet cfm cc mep-up mep-down cross-connect loop config
+snmp-server enable traps ethernet cfm crosscheck mep-missing mep-unknown service-up
+snmp-server enable traps fru-ctrl ps-output-change status
+snmp-server enable traps entity
+snmp-server enable traps module-auto-shutdown sys-action auto-shutdown
+snmp-server enable traps cpu threshold
+snmp-server enable traps rsvp
+snmp-server enable traps srp
+snmp-server enable traps vtp
+snmp-server enable traps vlancreate
+snmp-server enable traps vlandelete
+snmp-server enable traps flash insertion removal
+snmp-server enable traps c6kxbar intbus-crcexcd intbus-crcrcvrd swbus
+snmp-server enable traps entity-diag boot-up-fail hm-test-recover hm-thresh-reached scheduled-test-fail
+snmp-server enable traps envmon fan shutdown supply temperature status
+snmp-server enable traps port-security
+snmp-server enable traps vswitch vsl
+snmp-server enable traps mvpn
+snmp-server enable traps mpls traffic-eng
+snmp-server enable traps mpls fast-reroute protected
+snmp-server enable traps mpls ldp
+snmp-server enable traps pw vc
+snmp-server enable traps alarms informational
+snmp-server enable traps vlan-mac-limit
+snmp-server enable traps voice poor-qov
+snmp-server enable traps mpls vpn
+snmp-server host 10.30.1.105 F@QIH_COMM 
+snmp-server host 10.30.5.200 F@QIH_COMM 
+!
+!
+control-plane
+!
+!
+dial-peer cor custom
+!
+!
+!
+banner motd 
+
+
+CCC
+
+                  @@...@@..@@@@@@@@.@@@@@@..@@@@@@@@.@@....@@.@@@@@@
+                  @@...@@..@@....@@.@@......@@....@@.@@....@@.@@....@    
+                  @@@@@@@..@@@@@@@@.@@......@@....@@.@@....@@.@@@@@@
+                  @@@@@@@..@@@@@@@@.@@@@@@..@@....@@.@@....@@.@@...@@
+                  @@...@@..@@....@@.....@@..@@....@@.@@....@@.@@...@@
+                  @@...@@..@@....@@.@@@@@@..@@@@@@@@.@@@@@@@@.@@@@@@ 
+                 H A R D W A R E   S O L U T I O N S   B U I L D E R S
+              &&&&###################################################&&&&
+
+
+                                      FAKIEH Network
+
+                             Unauthorized Access Prohibited!!!!
+
+
+privilege interface level 2 interface
+privilege configure level 2 line
+privilege configure level 2 control-plane
+privilege configure level 2 router
+privilege configure level 2 aaa
+privilege configure level 2 boot
+privilege configure level 2 hostname
+privilege configure level 2 vlan
+privilege configure level 2 interface
+privilege configure level 2 ip dhcp
+privilege configure level 2 ip address
+privilege configure level 2 ip dhcp pool
+privilege exec level 2 show running-config
+!
+line con 0
+ exec-timeout 5 0
+ logging synchronous
+line vty 0 4
+ exec-timeout 5 0
+ authorization exec LOGIN-AUTHOR
+ accounting connection LOGIN-ACC
+ accounting commands 0 LOGIN-ACC
+ accounting commands 1 LOGIN-ACC
+ accounting commands 15 LOGIN-ACC
+ logging synchronous
+ login authentication LOGIN-AUTHEN
+line vty 5 1510
+ exec-timeout 5 0
+ authorization exec LOGIN-AUTHOR
+ accounting connection LOGIN-ACC
+ accounting commands 0 LOGIN-ACC
+ accounting commands 1 LOGIN-ACC
+ accounting commands 15 LOGIN-ACC
+ logging synchronous
+ login authentication LOGIN-AUTHEN
+!
+!
+!
+!
+module provision switch 1
+ slot 1 slot-type 207 port-type 106 number 1  virtual-slot 17
+ slot 2 slot-type 96 port-type 74 number 6  virtual-slot 18
+ slot 3 slot-type 94 port-type 55 number 8  virtual-slot 19
+ slot 4 slot-type 147 port-type 61 number 48  virtual-slot 20
+ slot 5 slot-type 254 port-type 31 number 2 port-type 61 number 1 port-type 60 number 2  virtual-slot 21
+ slot 8 slot-type 96 port-type 74 number 6  virtual-slot 24
+ !
+module provision switch 2
+ slot 1 slot-type 207 port-type 106 number 1  virtual-slot 33
+ slot 2 slot-type 96 port-type 74 number 6  virtual-slot 34
+ slot 3 slot-type 94 port-type 55 number 8  virtual-slot 35
+ slot 4 slot-type 147 port-type 61 number 48  virtual-slot 36
+ slot 5 slot-type 254 port-type 31 number 2 port-type 61 number 1 port-type 60 number 2  virtual-slot 37
+ slot 8 slot-type 96 port-type 74 number 6  virtual-slot 40
+ 
+!
+
+end

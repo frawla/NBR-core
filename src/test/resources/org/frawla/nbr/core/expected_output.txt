@@ -1,0 +1,23 @@
+admin	15	FULL	 Crypto
+mohammed	15	FULL	 Crypto
+Interface: 	Loopback9	null	null	null
+Interface: 	Loopback7	null	null	null
+Interface: 	Loopback9	null	ip address 10.200.0.1 /32	sfp
+Interface: 	Loopback4	Connect	ip address 10.200.0.1 /32	null
+Interface: 	Loopback0	null	ip address 10.200.0.1 /32	null
+Interface: 	Loopback1	null	no ip address	null
+Interface: 	GigabitEthernet0/0.3858	null	ip address 172.31.31.94 /30	null
+Interface: 	GigabitEthernet0/1	INSIDE	ip address 10.109.1.1 /24	rj45
+Protocols:
+vrrp:	vrrp 1	100.100.100.1
+ospf: 	router-id 10.200.0.1	 network 10.109.1.1 0.0.0.0 area 0
+ network 10.200.0.1 0.0.0.0 area 0
+
+ospf: 	router-id 10.200.0.1	 network 10.109.1.1 0.0.0.0 area 0
+ network 10.200.0.1 0.0.0.0 area 0
+
+Access-List: 	ip access-list 
+	permit 10.40.4.120
+	permit 10.30.5.200
+	permit 10.30.1.232
+snmp-server: 	host: 10.30.1.232, 10.30.5.200, 10.40.4.120, 

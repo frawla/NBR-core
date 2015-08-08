@@ -1,0 +1,11 @@
+
+
+
+
+to discard any changes use this one
+
+git checkout -- <file>
+
+Example:
+
+git checkout -- "lib/deletedFile.txt"

@@ -1,0 +1,167 @@
+
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Internet-SW2
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$7gOJ$.s5W5LbLgZtzrz2bOn516/
+!
+no aaa new-model
+system mtu routing 1500
+ip subnet-zero
+!
+!
+!
+crypto pki trustpoint TP-self-signed-373936512
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-373936512
+ revocation-check none
+ rsakeypair TP-self-signed-373936512
+!
+!
+crypto pki certificate chain TP-self-signed-373936512
+ certificate self-signed 01
+  30820243 308201AC A0030201 02020101 300D0609 2A864886 F70D0101 04050030 
+  30312E30 2C060355 04031325 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 33373339 33363531 32301E17 0D393330 33303130 30303131 
+  375A170D 32303031 30313030 30303030 5A303031 2E302C06 03550403 1325494F 
+  532D5365 6C662D53 69676E65 642D4365 72746966 69636174 652D3337 33393336 
+  35313230 819F300D 06092A86 4886F70D 01010105 0003818D 00308189 02818100 
+  D7FCA189 4E71AA7F BF67E9A3 433E18BA 057CADBC 4A1516EC 6AFFF562 8D08E908 
+  47C95728 69AAE425 41AB16FC 3634FA2E 686CFBE5 8829D310 67D53A16 2058BF48 
+  03132C8F 709E3F56 FEE5C4BC 0B85A5BB 0335D787 EFC1512C BAF95682 3810B474 
+  5112F930 0DE95157 8DAE9D75 FBCBC2EB F21DCF6E B47D3B37 37A93530 0CCEF2E7 
+  02030100 01A36D30 6B300F06 03551D13 0101FF04 05300301 01FF3018 0603551D 
+  11041130 0F820D49 6E746572 6E65742D 5357322E 301F0603 551D2304 18301680 
+  1445EAB8 1D496844 F4286D91 2515439B 1A5FC4F1 AA301D06 03551D0E 04160414 
+  45EAB81D 496844F4 286D9125 15439B1A 5FC4F1AA 300D0609 2A864886 F70D0101 
+  04050003 81810047 3471FC43 AD054D2E E3896A67 8922A0FF 1FA63874 1F14EEDA 
+  8DF09B28 FF49B9E7 BBF3C519 4FFB4938 C495E821 43D755D2 0033B214 E8654BBE 
+  4593736A 96E6B2DE 8C5E9AC3 9C1AE901 C9E0231D 78268069 58B707DA 1C1F7ABE 
+  EA8D114C 7784ED65 BD3168C7 78C50B15 42AC5441 6E205353 D78FF1BB 65173CF7 
+  A056D6D0 1D1D88
+  quit
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface Port-channel1
+ switchport trunk native vlan 100
+ switchport trunk allowed vlan 60,70,100,109
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+ description Connect to ASA-2 DMZ port 3
+ switchport trunk allowed vlan 60,70,100
+ switchport mode trunk
+!
+interface GigabitEthernet0/2
+ switchport access vlan 9
+ switchport mode access
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+ description connect to sonicwall X1 INTernet
+ switchport access vlan 100
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+ description connect to wan-RTR
+ switchport access vlan 109
+ switchport mode access
+!
+interface GigabitEthernet0/14
+ description connect to ssonicwall mpls X2
+ switchport access vlan 109
+ switchport mode access
+!
+interface GigabitEthernet0/15
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+ switchport access vlan 100
+ switchport mode access
+!
+interface GigabitEthernet0/20
+ description Connect to ASA-2 port 0
+ switchport access vlan 900
+ switchport mode access
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+ description "Uplink to  INternet-sw-1 FOR ETHERCHANNEL 1"
+ switchport trunk native vlan 100
+ switchport trunk allowed vlan 60,70,100,109
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface GigabitEthernet0/24
+ description "Uplink to  Internet-SW-1 FOR ETHERCHANNEL 1"
+ switchport trunk native vlan 100
+ switchport trunk allowed vlan 60,70,100,109
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface Vlan1
+ ip address 59.59.59.59 255.255.255.0
+ no ip route-cache
+!
+interface Vlan100
+ ip address 100.100.100.200 255.255.255.0
+ no ip route-cache
+!
+ip http server
+ip http secure-server
+!
+control-plane
+!
+!
+line con 0
+ login
+line vty 0 4
+ login
+line vty 5 15
+ login
+!
+end
