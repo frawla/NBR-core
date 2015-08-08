@@ -77,21 +77,43 @@ username mohammed privilege 15 secret 5 $1$..Yc$tjXdBXcXngK94fqjCnLN.1
 redundancy
 !
 !
+Loopback0
+!
+!
+license udi pid CISCO3825 sn FCZ141770QS
+!
+!
+interface Loopback9
+ffefgsdfgsfdgsdfg fdg sdfg
+!
+!
+interface Loopback7
 ! 
 !
+interface Loopback9
+ ip address 10.200.0.1 255.255.255.255
+ ffefgsdfgsfdgsdfg fdg sdfg 
+ media-type sfp
+ negotiation auto  
 !
 !
 !
+!
+interface Loopback4
+ description Connect to wan firewall
+ nothing but too long text  
+ ip address 10.200.0.1 255.255.255.255
 !
 !
 !
 interface Loopback0
- ip address 10.200.0.1 255.255.255.255
-!
+  ip address 10.200.0.1 255.255.255.255
+ !
 interface Loopback1
- no ip address
+ no ip address 
 !
-interface GigabitEthernet0/0
+interface
+ GigabitEthernet0/0
  description Connect to wan firewall
  no ip address
  duplex auto
@@ -111,6 +133,28 @@ interface GigabitEthernet0/1
  speed auto
  media-type rj45
  vrrp 1 ip 100.100.100.1
+!
+router ospf 1
+ router-id 10.200.0.1
+ redistribute connected subnets
+ redistribute static subnets
+ redistribute bgp 65024 subnets
+ network 10.109.1.1 0.0.0.0 area 0
+ network 10.200.0.1 0.0.0.0 area 0
+!
+router bgp 65024
+ bgp router-id 10.200.0.1
+ bgp log-neighbor-changes
+ redistribute ospf 1 match internal external 1 external 2
+ neighbor 172.31.31.93 remote-as 65000
+ default-information originate
+ no auto-summary
+!
+ip forward-protocol nd
+!
+! 
+!
+!
 !
 router ospf 1
  router-id 10.200.0.1

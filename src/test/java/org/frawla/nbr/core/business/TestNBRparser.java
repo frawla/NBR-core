@@ -10,25 +10,22 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.frawla.nbr.core.business.Importer;
-import org.frawla.nbr.core.business.NBRparser;
-import org.frawla.nbr.core.common.Constants;
 import org.frawla.nbr.core.common.Util;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.schlichtherle.truezip.file.TFile;
 
 public class TestNBRparser
 {
-    private static String strFileContent;
+    private String strFileContent;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
+    @Before
+    public void setUpBefore() throws Exception
     {
         Map<String, String> backupFileContentList;
         List<String> l = new ArrayList<>();
-        String tstfile = (Constants.TEST_RESOUCES_PATH + "/R3-Rotuer_3800_WAN-RTR-1-Win.txt").replace("/", java.io.File.separator);
+        String tstfile = Util.getTestResourcesPath("/R3-Rotuer_3800_WAN-RTR-1.txt");
         l.add(tstfile);
         Importer im = new Importer(l);
         backupFileContentList = im.getFileContentMap();

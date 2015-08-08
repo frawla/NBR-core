@@ -31,14 +31,6 @@ public class Importer
         for (String fn : fileNames)
         {
             TFile tf = new TFile(new File(fn));
-            if (tf.exists())
-            {
-                System.out.println("exists");
-            }
-            else
-            {
-                System.err.println("File '" + tf + "' does not exist");
-            }
             addFile(tf);
         }
     }
