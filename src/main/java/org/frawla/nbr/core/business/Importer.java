@@ -15,11 +15,8 @@ public class Importer
     private List<String> fileNames = new ArrayList<>();
     private Map<String, String> fileContentMap = new HashMap<>();
 
-    /**
-     * 
-     */
     public Importer()
-    {  
+    {
         super();
     }
 
@@ -34,10 +31,17 @@ public class Importer
         for (String fn : fileNames)
         {
             TFile tf = new TFile(new File(fn));
+            if (tf.exists())
+            {
+                System.out.println("exists");
+            }
+            else
+            {
+                System.err.println("File '" + tf + "' does not exist");
+            }
             addFile(tf);
         }
     }
-
 
     /**
      * @return the map that maps a FileName (key) and its raw content as a string (value).
@@ -57,10 +61,9 @@ public class Importer
         }
         else if (tFile.isFile())
         {
-            fileContentMap.put(tFile.getPath(), Util.readFileAsString(tFile));            
+            fileContentMap.put(tFile.getPath(), Util.readFileAsString(tFile));
         }
         // else is special file or non-existent
     }
-
 
 }//end class

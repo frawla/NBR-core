@@ -28,7 +28,7 @@ public class TestNBRparser
     {
         Map<String, String> backupFileContentList;
         List<String> l = new ArrayList<>();
-        String tstfile = (Constants.TEST_RESOUCES_PATH + "/R3-Rotuer 3800 WAN-RTR-1-win.txt").replace("/", java.io.File.separator);
+        String tstfile = (Constants.TEST_RESOUCES_PATH + "/R3-Rotuer_3800_WAN-RTR-1-Win.txt").replace("/", java.io.File.separator);
         l.add(tstfile);
         Importer im = new Importer(l);
         backupFileContentList = im.getFileContentMap();

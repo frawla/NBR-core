@@ -4,40 +4,32 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import org.frawla.nbr.core.common.Util;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.schlichtherle.truezip.file.TFile;
 
-public class Test_Util {
+public class Test_Util
+{
+    @Test
+    public void Test_getFileWithoutExtention()
+    {
+        File f = new File(".\\src\\res\\template.xlsx");
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+        String actual = Util.getFileWithoutExtention(f.getPath());
+        String expected = "template";
 
-	@Test
-	public void Test_getFileWithoutExtention() {
+        assertEquals(expected, actual);
+    }
 
-		File f = new File(".\\src\\res\\template.xlsx");
+    @Test
+    public void Test_convertNetmaskToCIDR()
+    {
+        int actual = Util.convertSubnetMaskToCIDR("255.255.128.0");
+        int expected = 17;
 
-		String actual = Util.getFileWithoutExtention(f.getPath());
-		String expected = "template";
+        assertEquals(expected, actual);
+    }
 
-		assertEquals(expected, actual);
-
-	}
-
-	@Test
-	public void Test_convertNetmaskToCIDR() {
-
-		int actual = Util.convertSubnetMaskToCIDR("255.255.128.0");
-		int expected = 17;
-
-		assertEquals(expected, actual);
-
-	}
-	
     @Test
     public void Test_readFileAsString()
     {
@@ -50,10 +42,9 @@ public class Test_Util {
     @Test
     public void getFileWithoutExtention()
     {
-        final String fn = Util.getTestResourcesPath("/normal.txt");
-        final String actual = Util.getFileWithoutExtention(fn);
+        final String filepath = Util.getTestResourcesPath("/normal.txt");
+        final String actual = Util.getFileWithoutExtention(filepath);
         final String expected = "normal";
-        assertEquals(expected, actual);        
+        assertEquals(expected, actual);
     }
-
 }

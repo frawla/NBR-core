@@ -20,9 +20,8 @@ import org.junit.Test;
  */
 public class TestImporter
 {
-    /**
-     * @throws java.lang.Exception
-     */
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    
     private Importer im;
     private String fn = Constants.EMPTY_STRING;
     private String fzip = Constants.EMPTY_STRING;
@@ -40,9 +39,10 @@ public class TestImporter
 
         //Expected
         Map<String, String> mp = new HashMap<>();        
-        mp.put(fn, "line 1\r\nline 2\r\nline 3");
-        mp.put(fzip, "zipline 1\r\nzipline 2\r\nzipline 3");
-
+        
+        mp.put(fn, "line 1\r\nline 2\r\nline 3".replaceAll("\r\n", LINE_SEPARATOR));
+        mp.put(fzip, "zipline 1\r\nzipline 2\r\nzipline 3".replaceAll("\r\n", LINE_SEPARATOR));
+        
         //Actual
         ArrayList<String> al = new ArrayList<>();
         al.add(fn);
