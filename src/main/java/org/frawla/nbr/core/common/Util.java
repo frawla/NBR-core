@@ -17,14 +17,16 @@ public final class Util
         super();
     }
 
-    
-    public static String getTestResourcesPath(final String filePath){
+    public static String getTestResourcesPath(final String filePath)
+    {
         return (Constants.TEST_RESOUCES_PATH + filePath).replace("/", java.io.File.separator);
     }
-    
-    public static String getMainResourcesPath(final String filePath){
+
+    public static String getMainResourcesPath(final String filePath)
+    {
         return (Constants.MAIN_RESOUCES_PATH + filePath).replace("/", java.io.File.separator);
     }
+
     public static boolean openFileInDefalutApplication(final String appPath)
     {
         boolean failed = false;
@@ -46,7 +48,7 @@ public final class Util
         {
             failed = execute2(appPath);
         }
-        
+
         return failed;
     }
 
@@ -151,7 +153,8 @@ public final class Util
             String line = null;
             StringBuilder str = new StringBuilder();
 
-            if ((line = in.readLine()) != null){
+            if ((line = in.readLine()) != null)
+            {
                 line = line.replace("\n", "").replace("\r", "");
                 str.append(line);
             }

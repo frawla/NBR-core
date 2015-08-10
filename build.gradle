@@ -1,6 +1,6 @@
 
 //Mr. Gradle Hello
-//Please make test 
+//Please make test
 
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
@@ -18,11 +18,6 @@
 		compile files('lib/poi-ooxml-schemas-3.12-20150511.jar')
 		compile files('lib/poi-scratchpad-3.12-20150511.jar')
 		compile files('lib/xmlbeans-2.6.0.jar')
-		testCompile 'junit:junit:4.12'	
-
-
-
-
 		testCompile 'junit:junit:4.12'	
 	}
 	

@@ -21,32 +21,34 @@ import org.frawla.nbr.core.common.Util;
 
 import de.schlichtherle.truezip.file.TFile;
 
-public class SheetExporter extends AbstractExporter
+public final class SheetExporter extends AbstractExporter
 {
     private Workbook workBook;
-    private static final String TEMP_DIRECTORY = System.getProperty("java.io.tmpdir");
+
+    public SheetExporter()
+    {
+        super();
+    }
 
     @Override
     public void export(final Map<String, String> resultMap)
     {
-        final File dst;
+        assert null != resultMap : "Parameter 'resultMap' of method 'export' must not be null";
+
         try
         {
-            /** copy template file into Temp Dir. */
-            dst = new File(TEMP_DIRECTORY + "Samitemp.xlsx");
-            TFile.cp(new File(Util.getMainResourcesPath("/template.xlsx")), dst);
+            final TFile destination = copyTmpFileIntoTmpDir();
 
-            try (FileInputStream fin = new FileInputStream(dst);)
+            try (FileInputStream fin = new FileInputStream(destination);)
             {
                 workBook = WorkbookFactory.create(fin);
-                resultMap.forEach((k, v) -> ExportToExcel(k, v, dst));
+                resultMap.forEach((k, v) -> ExportToExcel(k, v, destination));
             }
             catch (EncryptedDocumentException | InvalidFormatException e)
             {
                 e.printStackTrace();
             }
-
-            Util.openFileInDefalutApplication(dst.getPath());
+            //Util.openFileInDefalutApplication(destination.getPath());
         }
         catch (IOException e)
         {
@@ -54,8 +56,23 @@ public class SheetExporter extends AbstractExporter
         }
     }
 
+    private TFile copyTmpFileIntoTmpDir() throws IOException
+    {
+        final String TEMP_DIRECTORY = System.getProperty("java.io.tmpdir");
+        /** copy template file into Temp Dir. */
+        final String NBRTemp = TEMP_DIRECTORY + java.io.File.separator + "NBRTemp";
+        final TFile NBRTempDir = new TFile(NBRTemp);
+        NBRTempDir.mkdir();
+        final TFile dst = new TFile(NBRTempDir + java.io.File.separator + "Samitemp.xlsx");
+        TFile.cp(new File(Util.getMainResourcesPath("/template.xlsx")), dst);
+        return dst;
+    }
+
     private void ExportToExcel(final String path, final String formattedString, final File dst)
     {
+        assert null != formattedString && !formattedString.isEmpty() : "Parameter 'formattedString' of method 'ExportToExcel' must not be empty";
+        assert null != dst : "Parameter 'dst' of method 'ExportToExcel' must not be null";
+
         System.out.println("Proccessing...");
 
         String SheetName = Util.getFileWithoutExtention(path);
@@ -79,7 +96,7 @@ public class SheetExporter extends AbstractExporter
 
         //auto-size all column
         //for (int colNum = 0; colNum < mySht.getRow(7).getLastCellNum(); colNum++)
-            workBook.getSheet(SheetName).autoSizeColumn(1);
+        workBook.getSheet(SheetName).autoSizeColumn(1);
 
         //header           
         Row rHeader = insertRowBefore(0, mySht);
@@ -113,7 +130,6 @@ public class SheetExporter extends AbstractExporter
 
     private CellStyle getCellStyle()
     {
-
         CellStyle cstyle = workBook.createCellStyle();
         cstyle.setFillForegroundColor(IndexedColors.YELLOW.index);
 
@@ -142,5 +158,10 @@ public class SheetExporter extends AbstractExporter
         sheet.shiftRows(index, sheet.getLastRowNum(), 1, true, false);
         Row newRow = sheet.createRow(index);
         return newRow;
+    }
+
+    Workbook getWorkBook()
+    {
+        return this.workBook;
     }
 }
