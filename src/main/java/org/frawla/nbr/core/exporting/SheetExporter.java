@@ -48,7 +48,7 @@ public final class SheetExporter extends AbstractExporter
             {
                 e.printStackTrace();
             }
-            Util.openFileInDefalutApplication(destination.getPath());
+            //Util.openFileInDefalutApplication(destination.getPath());
         }
         catch (IOException e)
         {
@@ -158,5 +158,10 @@ public final class SheetExporter extends AbstractExporter
         sheet.shiftRows(index, sheet.getLastRowNum(), 1, true, false);
         Row newRow = sheet.createRow(index);
         return newRow;
+    }
+
+    Workbook getWorkBook()
+    {
+        return this.workBook;
     }
 }

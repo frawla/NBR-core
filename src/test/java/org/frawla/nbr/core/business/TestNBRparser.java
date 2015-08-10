@@ -39,7 +39,7 @@ public class TestNBRparser
         final String actual = NBRparser.getResult(strFileContent);
         final String expected = Util.readFileAsString(new TFile(fPath));
 
-        assertEquals("expecte '" + expected + "' should be equal to actual '" + actual + "'",
+        assertEquals("expected '" + expected + "' should be equal to actual '" + actual + "'",
                 expected.trim().replaceAll("\n", "").replaceAll("\r", ""), actual.trim().replaceAll("\n", "").replaceAll("\r", ""));
     }
 
@@ -53,12 +53,12 @@ public class TestNBRparser
         {
             final String expected = "Hello keyword";
             final Method method = NBRparser.class.getDeclaredMethod(
-                    /* Private Mehtod Name */       "printResult",
-                    /* List of Parameter Types */   Matcher.class, String.class, int[].class);
+            /* Private Mehtod Name */"printResult",
+            /* List of Parameter Types */Matcher.class, String.class, int[].class);
             method.setAccessible(true);
             final StringBuilder actual = (StringBuilder) method.invoke(
-                    /* an object to invoke the method */    NBRparser.getSingletoneObject(),
-                    /* List of Arguments */                 mchr, "Hello %s", new int[] { 1 });
+            /* an object to invoke the method */NBRparser.getSingletoneObject(),
+            /* List of Arguments */mchr, "Hello %s", new int[] {1 });
             assertEquals(expected, actual.toString());
         }
         catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
