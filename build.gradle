@@ -20,13 +20,9 @@
 		compile files('lib/xmlbeans-2.6.0.jar')
 		testCompile 'junit:junit:4.12'	
 
-		runtime files('lib/truezip-samples-7.7.9-jar-with-dependencies.jar')
-		runtime files('lib/poi-3.12-20150511.jar')
-		runtime files('lib/poi-ooxml-3.12-20150511.jar')
-		runtime files('lib/poi-ooxml-schemas-3.12-20150511.jar')
-		runtime files('lib/poi-scratchpad-3.12-20150511.jar')
-		runtime files('lib/xmlbeans-2.6.0.jar')
-		
+
+
+
 		testCompile 'junit:junit:4.12'	
 	}
 	
