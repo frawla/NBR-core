@@ -8,7 +8,7 @@
 	mainClassName = "org.gradle.sample.Main"
 
 	repositories{
-		mavenCentral();		
+		mavenCentral();
 	}
 	
 	dependencies{
@@ -18,6 +18,5 @@
 		compile files('lib/poi-ooxml-schemas-3.12-20150511.jar')
 		compile files('lib/poi-scratchpad-3.12-20150511.jar')
 		compile files('lib/xmlbeans-2.6.0.jar')
-		testCompile 'junit:junit:4.12'	
+		testCompile 'junit:junit:4.12'
 	}
-	
