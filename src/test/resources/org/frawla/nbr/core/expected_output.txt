@@ -1,3 +1,6 @@
+Host Name:	FAQIH-JED-DC-WAN-RTR
+License: 	udi pid CISCO3825 sn FCZ141770QS
+License: 	udi pid CISCO3825 sn FCZ141770QS
 admin	15	FULL	 Crypto
 mohammed	15	FULL	 Crypto
 Interface: 	Loopback9	null	null	null

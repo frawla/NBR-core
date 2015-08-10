@@ -34,12 +34,12 @@ public class NBRparser
         Matcher m;
 
         // Host Name
-        p = Pattern.compile("hostname ([\\w-]+)\\n" , Pattern.MULTILINE);
+        p = Pattern.compile("hostname ([\\w-]+)\\r\\n" , Pattern.MULTILINE);
         m = p.matcher(strFileContent);
         str.append(printResult(m, "Host Name:\t%s" + System.lineSeparator(), 1));
 
         // license
-        p = Pattern.compile("(?sm)license ([\\w ]+)\\n");
+        p = Pattern.compile("(?sm)license ([\\w ]+)\\r\\n");
         m = p.matcher(strFileContent);
         str.append(printResult(m, "License: \t%s\n", 1));
 
